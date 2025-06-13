@@ -7,8 +7,10 @@ import { StatsSection } from '@/components/stats-section';
 import { EntryCard } from '@/components/entry-card';
 import { ComposeModal } from '@/components/compose-modal';
 import { ReadingModal } from '@/components/reading-modal';
+import { MediumEditor } from '@/components/medium-editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { countWords } from '@/lib/utils';
+import { api } from '@/lib/api';
 import type { Post } from '@shared/schema';
 
 export default function Home() {
@@ -17,9 +19,13 @@ export default function Home() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
 
-  const { data: posts = [], isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['/api/posts/user/sarah'],
+    queryFn: () => api.posts.getByUsername('sarah'),
   });
+
+  // Ensure posts is always an array
+  const posts = Array.isArray(data) ? data : [];
 
   const handleReadMore = (post: Post) => {
     setSelectedPost(post);
@@ -63,6 +69,11 @@ export default function Home() {
           writingStreak={writingStreak}
           wordsWritten={totalWords}
         />
+
+        {/* Medium-style Writing Area */}
+        <section className="mb-12">
+          <MediumEditor />
+        </section>
 
         {/* Entry Feed */}
         <section className="space-y-8">
