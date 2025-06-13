@@ -1,7 +1,8 @@
-import { Search, User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { Search, User, Settings, LogOut, ChevronDown, BookOpen, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Link } from 'wouter';
 
 export function Navigation() {
   return (
@@ -9,14 +10,24 @@ export function Navigation() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <h1 className="text-2xl font-serif font-semibold text-primary">Journal</h1>
+            <Link href="/">
+              <h1 className="text-2xl font-serif font-semibold text-primary cursor-pointer hover:text-primary/80 transition-colors duration-200">
+                Journal
+              </h1>
+            </Link>
             <div className="hidden md:flex space-x-6">
-              <a href="#" className="text-charcoal hover:text-primary transition-colors duration-200 font-medium">
-                My Entries
-              </a>
-              <a href="#" className="text-charcoal hover:text-primary transition-colors duration-200 font-medium">
-                Insights
-              </a>
+              <Link href="/entries">
+                <a className="text-charcoal hover:text-primary transition-colors duration-200 font-medium flex items-center space-x-2">
+                  <BookOpen className="h-4 w-4" />
+                  <span>My Entries</span>
+                </a>
+              </Link>
+              <Link href="/">
+                <a className="text-charcoal hover:text-primary transition-colors duration-200 font-medium flex items-center space-x-2">
+                  <Home className="h-4 w-4" />
+                  <span>Home</span>
+                </a>
+              </Link>
             </div>
           </div>
           
