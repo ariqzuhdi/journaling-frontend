@@ -58,26 +58,10 @@ export default function Home() {
           <h2 className="text-4xl md:text-5xl font-serif font-semibold text-primary mb-4">
             Your Personal Sanctuary
           </h2>
-          <p className="text-lg text-charcoal/80 max-w-2xl mx-auto leading-relaxed mb-8">
+          <p className="text-lg text-charcoal/80 max-w-2xl mx-auto leading-relaxed">
             A private space for your thoughts, reflections, and journey of self-discovery. 
             Write freely, explore deeply, and find clarity in your words.
           </p>
-          
-          {/* Quick Navigation Links for Testing */}
-          <div className="flex justify-center space-x-4 mb-8">
-            <Link href="/login">
-              <Button variant="outline" className="px-6 py-2 border border-primary/30 text-primary hover:bg-primary hover:text-white rounded-full transition-all duration-200">
-                <LogIn className="h-4 w-4 mr-2" />
-                Login
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button variant="outline" className="px-6 py-2 border border-primary/30 text-primary hover:bg-primary hover:text-white rounded-full transition-all duration-200">
-                <UserPlus className="h-4 w-4 mr-2" />
-                Register
-              </Button>
-            </Link>
-          </div>
         </section>
 
         {/* Stats Section */}
