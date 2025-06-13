@@ -97,12 +97,12 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
         </div>
 
         {/* Content Editor */}
-        <div className="px-8 py-6">
+        <div className="px-8 py-4">
           <TiptapEditor
             content={content}
             onChange={setContent}
             placeholder="Share what's on your mind, your feelings, thoughts, or experiences..."
-            className="min-h-[400px]"
+            className="min-h-[200px]"
           />
         </div>
 

@@ -34,7 +34,7 @@ export function TiptapEditor({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-lg max-w-none focus:outline-none min-h-[400px] font-serif text-lg leading-relaxed',
+        class: 'prose prose-lg max-w-none focus:outline-none min-h-[150px] font-serif text-lg leading-relaxed',
         placeholder,
       },
     },
