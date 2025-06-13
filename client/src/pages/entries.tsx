@@ -24,9 +24,12 @@ export default function Entries() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isReadingOpen, setIsReadingOpen] = useState(false);
 
+  // TODO: Get current user from auth context
+  const currentUser = 'sarah'; // This should come from authentication state
+  
   const { data, isLoading } = useQuery({
-    queryKey: ['/api/posts/user/sarah'],
-    queryFn: () => api.posts.getByUsername('sarah'),
+    queryKey: ['/api/posts/user', currentUser],
+    queryFn: () => api.posts.getByUsername(currentUser),
   });
 
   const posts = Array.isArray(data) ? data : [];
@@ -136,6 +139,10 @@ export default function Entries() {
                 <SelectItem value="anxious">Anxious</SelectItem>
                 <SelectItem value="peaceful">Peaceful</SelectItem>
                 <SelectItem value="excited">Excited</SelectItem>
+                <SelectItem value="reflective">Reflective</SelectItem>
+                <SelectItem value="hopeful">Hopeful</SelectItem>
+                <SelectItem value="confused">Confused</SelectItem>
+                <SelectItem value="motivated">Motivated</SelectItem>
               </SelectContent>
             </Select>
 
