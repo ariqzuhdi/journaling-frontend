@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { formatDate, countWords } from '@/lib/utils';
 import { api } from '@/lib/api';
 import type { Post } from '@shared/schema';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 export default function Entries() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,8 +26,9 @@ export default function Entries() {
   const [isReadingOpen, setIsReadingOpen] = useState(false);
 
   // TODO: Get current user from auth context
-  const currentUser = 'sarah'; // This should come from authentication state
-  
+  const {data: user} = useCurrentUser();
+  const currentUser = user?.username;
+
   const { data, isLoading } = useQuery({
     queryKey: ['/api/posts/user', currentUser],
     queryFn: () => api.posts.getByUsername(currentUser),

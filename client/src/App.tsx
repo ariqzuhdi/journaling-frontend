@@ -8,6 +8,7 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Entries from "@/pages/entries";
 import NotFound from "@/pages/not-found";
+import ProtectedRoute from "@/components/protected-route";
 
 function Router() {
   return (
@@ -15,7 +16,14 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
-      <Route path="/entries" component={Entries} />
+      <Route
+        path="/entries"
+        component={() => (
+          <ProtectedRoute>
+            <Entries />
+          </ProtectedRoute>
+        )}
+      />
       <Route component={NotFound} />
     </Switch>
   );

@@ -8,6 +8,11 @@ export interface GoApiResponse<T> {
   success?: boolean;
 }
 
+interface AuthResponse {
+  token: string;
+  message?: string;
+}
+
 export const api = {
   posts: {
     create: async (post: InsertPost): Promise<Post> => {
@@ -46,15 +51,22 @@ export const api = {
   },
 
   auth: {
-    login: async (credentials: { username: string; password: string }) => {
+    login: async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
       const response = await apiRequest('POST', '/api/login', credentials);
-      return await response.json();
+      const result: AuthResponse = await response.json();
+      
+      if(result.token){
+        localStorage.setItem('token', result.token);
+      }
+      
+      return result;
     },
 
-    register: async (userData: { username: string; password: string }) => {
+    register: async (userData: { username: string; email: string; password: string }) => {
       const response = await apiRequest('POST', '/api/register', userData);
       return await response.json();
     },
+
 
     logout: async () => {
       await apiRequest('POST', '/api/logout');

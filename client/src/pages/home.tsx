@@ -11,19 +11,26 @@ import { ReadingModal } from '@/components/reading-modal';
 import { MediumEditor } from '@/components/medium-editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { countWords } from '@/lib/utils';
+import { calculateWritingStreak } from '@/lib/utils';
 import { api } from '@/lib/api';
 import type { Post } from '@shared/schema';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 export default function Home() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isReadingOpen, setIsReadingOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['/api/posts/user/sarah'],
-    queryFn: () => api.posts.getByUsername('sarah'),
-  });
+const { data, isLoading } = useQuery({
+  enabled: !!user?.username,
+  queryKey: ['user-posts', user?.username],
+  queryFn: async () => {
+    if (!user?.username) throw new Error('User not found');
+    return await api.posts.getByUsername(user.username);
+  },
+});
 
   // Ensure posts is always an array
   const posts = Array.isArray(data) ? data : [];
@@ -46,7 +53,7 @@ export default function Home() {
   // Calculate stats
   const totalEntries = posts.length;
   const totalWords = posts.reduce((sum, post) => sum + countWords(post.body), 0);
-  const writingStreak = 12; // This would be calculated based on actual posting frequency
+  const writingStreak = calculateWritingStreak(posts); // This would be calculated based on actual posting frequency
 
   return (
     <div className="min-h-screen journal-bg">

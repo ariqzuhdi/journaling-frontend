@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import type { Post } from '@shared/schema';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 interface ReadingModalProps {
   isOpen: boolean;
@@ -18,26 +19,29 @@ interface ReadingModalProps {
 export function ReadingModal({ isOpen, onClose, post, onEdit }: ReadingModalProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { data: user } = useCurrentUser();
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => api.posts.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/posts/user/sarah'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
-      toast({
-        title: "Success",
-        description: "Your journal entry has been deleted.",
-      });
-      onClose();
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to delete journal entry. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+const deleteMutation = useMutation({
+  mutationFn: (id: number) => api.posts.delete(id),
+  onSuccess: () => {
+    if (user?.username) {
+      queryClient.invalidateQueries({ queryKey: ['user-posts', user.username] });
+    }
+    toast({
+      title: "Success",
+      description: "Your journal entry has been deleted.",
+    });
+    onClose();
+  },
+  onError: () => {
+    toast({
+      title: "Error",
+      description: "Failed to delete journal entry. Please try again.",
+      variant: "destructive",
+    });
+  },
+});
+
 
   if (!post) return null;
 

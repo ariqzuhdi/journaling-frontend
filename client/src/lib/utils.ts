@@ -1,5 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { format, subDays } from 'date-fns';
+import type { Post } from '@shared/schema';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -64,4 +66,26 @@ export function countWords(text: string): number {
 export function getExcerpt(text: string, maxLength: number = 200): string {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength).trim() + '...';
+}
+
+export function calculateWritingStreak(posts: Post[]): number {
+  const today = format(new Date(), 'yyyy-MM-dd');
+
+  const dateSet = new Set(
+    posts
+      .filter((p) => !!p.createdAt)
+      .map((post) => format(new Date(post.createdAt), 'yyyy-MM-dd'))
+  );
+
+  let streak = 0;
+  for (let i = 0; ; i++) {
+    const dateToCheck = format(subDays(new Date(), i), 'yyyy-MM-dd');
+    if (dateSet.has(dateToCheck)) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
 }

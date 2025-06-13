@@ -3,8 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Link } from 'wouter';
+import { useCurrentUser } from '@/hooks/use-current-user';
+
 
 export function Navigation() {
+  const { data: user } = useCurrentUser();
   return (
     <nav className="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-accent/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,10 +48,10 @@ export function Navigation() {
                 <Button variant="ghost" className="flex items-center space-x-2 text-charcoal hover:text-primary transition-colors duration-200 p-2">
                   <Avatar className="w-8 h-8">
                     <AvatarFallback className="bg-accent/20 text-primary font-medium text-sm">
-                      S
+                      {user?.username?.charAt(0).toUpperCase() ?? 'G'}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:block font-medium">Sarah</span>
+                  <span className="hidden sm:block font-medium">{ user?.username ?? 'Guest' }</span>
                   <ChevronDown className="h-4 w-4 hidden sm:block" />
                 </Button>
               </DropdownMenuTrigger>

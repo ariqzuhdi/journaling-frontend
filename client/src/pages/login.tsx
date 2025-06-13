@@ -5,25 +5,37 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Heart } from 'lucide-react';
+import { api } from '@/lib/api';
+import { useLocation } from 'wouter';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [, navigate] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     // TODO: Implement login logic dengan Go backend
-    console.log('Login attempt:', { username, password });
-    
-    // Simulate API call
-    setTimeout(() => {
+    if (!email || !password) {
+      alert('Email and password are required');
       setIsLoading(false);
-      // Redirect to home on success
-      window.location.href = '/';
-    }, 1000);
+      return;
+    }
+
+    try {
+      console.log('BASE_URL:', import.meta.env.VITE_API_BASE_URL);
+      const res = await api.auth.login({ email, password });
+      localStorage.setItem('token', res.token);
+      navigate('/');
+    } catch (err: any){
+        console.error(err);
+        alert('Login failed: ' +  (err?.message || 'Unknown error'));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -49,13 +61,13 @@ export default function Login() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={isLoading}
                 />

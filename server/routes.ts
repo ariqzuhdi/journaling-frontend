@@ -2,17 +2,17 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertPostSchema } from "@shared/schema";
-import { z } from "zod";
+import { any, z } from "zod";
+import { requireAuth } from "./middleware/requireAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // Create a new post
-  app.post("/api/posts", async (req, res) => {
+  app.post("/api/posts", requireAuth, async (req, res) => {
     try {
       const body = insertPostSchema.parse(req.body);
       
-      // For now, use a default user (sarah) - in real app this would come from authentication
-      const user = await storage.getUserByUsername("sarah");
+      const user = (req as any).user;
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }

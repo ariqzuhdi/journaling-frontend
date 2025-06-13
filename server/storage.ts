@@ -13,6 +13,9 @@ export interface IStorage {
   updatePost(id: number, updates: Partial<InsertPost>): Promise<Post | undefined>;
   deletePost(id: number): Promise<boolean>;
   getAllPosts(): Promise<Post[]>;
+  getSession(sessionId: string): Promise<{ userId: number } | undefined>;
+  getUserById(id: number): Promise<User | undefined>;
+
 }
 
 export class MemStorage implements IStorage {
@@ -20,12 +23,16 @@ export class MemStorage implements IStorage {
   private posts: Map<number, Post>;
   private currentUserId: number;
   private currentPostId: number;
+  private sessions: Map<string, { userId: number }>;
+
 
   constructor() {
     this.users = new Map();
     this.posts = new Map();
     this.currentUserId = 1;
     this.currentPostId = 1;
+    this.sessions = new Map();
+
     
     // Create a default user for testing
     this.createUser({ username: "sarah", password: "password" }).then(() => {
@@ -117,6 +124,15 @@ export class MemStorage implements IStorage {
     return Array.from(this.posts.values())
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
+
+  async getSession(sessionId: string): Promise<{ userId: number } | undefined> {
+  return this.sessions.get(sessionId);
+}
+
+  async getUserById(id: number): Promise<User | undefined> {
+    return this.getUser(id);
+  }
+
 }
 
 export const storage = new MemStorage();

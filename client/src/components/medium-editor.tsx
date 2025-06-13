@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import type { InsertPost } from '@shared/schema';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 interface MediumEditorProps {
   onClose?: () => void;
@@ -18,12 +19,12 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
   const [isPublishing, setIsPublishing] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { data: user } = useCurrentUser();
 
   const createMutation = useMutation({
     mutationFn: (data: InsertPost) => api.posts.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/posts/user/sarah'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+      queryClient.invalidateQueries({ queryKey: ['user-posts', user.username] });
       toast({
         title: "Published",
         description: "Your journal entry has been published.",

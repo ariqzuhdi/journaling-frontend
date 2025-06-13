@@ -8,6 +8,7 @@ import { Heart } from 'lucide-react';
 
 export default function Register() {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +17,26 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    if (!email || !username || !password) {
+      setError('All fields are required');
+      return;
+    }
+    
+    if(!email.includes('@') || !email.includes('.')) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (username.length < 3 || username.length > 20) {
+      setError('Username must be between 3 and 20 characters');
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setError('Username can only contain letters, numbers, and underscores');
+      return;
+    }
     
     if (password !== confirmPassword) {
       setError('Passwords do not match');
@@ -27,18 +48,32 @@ export default function Register() {
       return;
     }
 
+
     setIsLoading(true);
-    
-    // TODO: Implement register logic dengan Go backend
-    console.log('Register attempt:', { username, password });
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      const response = await fetch('http://localhost:3000/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to register');
+      }
+
+      window.location.href = '/login'; // Redirect to login on success
+
+    } catch (error: any) {
+      setError('Registration failed');
+    } finally {
       setIsLoading(false);
-      // Redirect to login on success
-      window.location.href = '/login';
-    }, 1000);
-  };
+    }
+  }
 
   return (
     <div className="min-h-screen journal-bg flex items-center justify-center px-4">
@@ -62,6 +97,18 @@ export default function Register() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
                 <Input

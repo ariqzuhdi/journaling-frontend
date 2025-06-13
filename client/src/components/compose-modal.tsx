@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import type { Post, InsertPost } from '@shared/schema';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 interface ComposeModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export function ComposeModal({ isOpen, onClose, editingPost }: ComposeModalProps
   const [content, setContent] = useState('');
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { data: user } = useCurrentUser();
 
   useEffect(() => {
     if (editingPost) {
@@ -35,7 +37,7 @@ export function ComposeModal({ isOpen, onClose, editingPost }: ComposeModalProps
   const createMutation = useMutation({
     mutationFn: (data: InsertPost) => api.posts.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/posts/user/sarah'] });
+      queryClient.invalidateQueries({ queryKey: ['user-posts', user.username] });
       queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
       toast({
         title: "Success",
@@ -57,13 +59,17 @@ export function ComposeModal({ isOpen, onClose, editingPost }: ComposeModalProps
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<InsertPost> }) => 
       api.posts.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/posts/user/sarah'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+     onSuccess: () => {
+    if (user?.username) {
+      queryClient.invalidateQueries({ queryKey: ['user-posts', user.username] });
+    }
+    queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+
       toast({
         title: "Success",
         description: "Your journal entry has been updated.",
       });
+      
       onClose();
     },
     onError: () => {
