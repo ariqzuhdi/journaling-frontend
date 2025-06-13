@@ -1,0 +1,195 @@
+import { useState } from 'react';
+import { Plus, Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useQuery } from '@tanstack/react-query';
+import { Navigation } from '@/components/navigation';
+import { StatsSection } from '@/components/stats-section';
+import { EntryCard } from '@/components/entry-card';
+import { ComposeModal } from '@/components/compose-modal';
+import { ReadingModal } from '@/components/reading-modal';
+import { Skeleton } from '@/components/ui/skeleton';
+import { countWords } from '@/lib/utils';
+import type { Post } from '@shared/schema';
+
+export default function Home() {
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [isReadingOpen, setIsReadingOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['/api/posts/user/sarah'],
+  });
+
+  const handleReadMore = (post: Post) => {
+    setSelectedPost(post);
+    setIsReadingOpen(true);
+  };
+
+  const handleEdit = (post: Post) => {
+    setEditingPost(post);
+    setIsComposeOpen(true);
+  };
+
+  const handleComposeClose = () => {
+    setIsComposeOpen(false);
+    setEditingPost(null);
+  };
+
+  // Calculate stats
+  const totalEntries = posts.length;
+  const totalWords = posts.reduce((sum, post) => sum + countWords(post.body), 0);
+  const writingStreak = 12; // This would be calculated based on actual posting frequency
+
+  return (
+    <div className="min-h-screen journal-bg">
+      <Navigation />
+      
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <section className="mb-12 text-center">
+          <h2 className="text-4xl md:text-5xl font-serif font-semibold text-primary mb-4">
+            Your Personal Sanctuary
+          </h2>
+          <p className="text-lg text-charcoal/80 max-w-2xl mx-auto leading-relaxed">
+            A private space for your thoughts, reflections, and journey of self-discovery. 
+            Write freely, explore deeply, and find clarity in your words.
+          </p>
+        </section>
+
+        {/* Stats Section */}
+        <StatsSection 
+          totalEntries={totalEntries}
+          writingStreak={writingStreak}
+          wordsWritten={totalWords}
+        />
+
+        {/* Entry Feed */}
+        <section className="space-y-8">
+          <div className="flex justify-between items-center">
+            <h3 className="text-2xl font-serif font-semibold text-primary">Recent Reflections</h3>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="px-4 py-2 text-sm font-medium text-charcoal hover:text-primary transition-colors duration-200 border border-accent/20 rounded-full hover:border-primary/30"
+              >
+                <Heart className="h-4 w-4 mr-2" />
+                All Moods
+              </Button>
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="space-y-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white rounded-xl p-8 shadow-sm border border-accent/10">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <Skeleton className="w-3 h-3 rounded-full" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-6 w-3/4 mb-3" />
+                  <div className="space-y-2 mb-6">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-32" />
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="mb-4">
+                <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Plus className="h-8 w-8 text-primary" />
+                </div>
+                <h4 className="text-xl font-serif font-semibold text-primary mb-2">
+                  Start Your Journey
+                </h4>
+                <p className="text-charcoal/60 max-w-md mx-auto">
+                  Your personal sanctuary awaits. Write your first journal entry and begin exploring your thoughts and feelings.
+                </p>
+              </div>
+              <Button
+                onClick={() => setIsComposeOpen(true)}
+                className="px-8 py-3 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors duration-200 font-medium"
+              >
+                Write Your First Entry
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {posts.map((post) => (
+                <EntryCard
+                  key={post.id}
+                  post={post}
+                  onReadMore={handleReadMore}
+                  onEdit={handleEdit}
+                />
+              ))}
+            </div>
+          )}
+
+          {posts.length > 0 && (
+            <div className="text-center py-8">
+              <Button
+                variant="outline"
+                className="px-8 py-3 text-primary border border-primary/30 rounded-full hover:bg-primary hover:text-white transition-all duration-200 font-medium"
+              >
+                Load More Reflections
+              </Button>
+            </div>
+          )}
+        </section>
+      </main>
+
+      {/* Floating Compose Button */}
+      <Button
+        onClick={() => setIsComposeOpen(true)}
+        className="fixed bottom-8 right-8 w-16 h-16 bg-primary text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center z-40"
+      >
+        <Plus className="h-6 w-6" />
+      </Button>
+
+      {/* Modals */}
+      <ComposeModal
+        isOpen={isComposeOpen}
+        onClose={handleComposeClose}
+        editingPost={editingPost}
+      />
+
+      <ReadingModal
+        isOpen={isReadingOpen}
+        onClose={() => setIsReadingOpen(false)}
+        post={selectedPost}
+        onEdit={handleEdit}
+      />
+
+      {/* Footer */}
+      <footer className="mt-24 border-t border-accent/10 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center space-y-4">
+            <h4 className="text-xl font-serif text-primary">Your Journey Continues</h4>
+            <p className="text-charcoal/60 max-w-2xl mx-auto">
+              Every entry is a step forward in your story. Keep writing, keep growing, keep discovering the beautiful complexity of being human.
+            </p>
+            <div className="flex justify-center space-x-6 pt-6">
+              <Button variant="ghost" size="sm" className="text-charcoal/50 hover:text-primary transition-colors duration-200">
+                <Heart className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
