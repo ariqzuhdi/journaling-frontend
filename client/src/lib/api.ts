@@ -1,5 +1,6 @@
 import { apiRequest } from './queryClient';
 import type { Post, InsertPost } from '@shared/schema';
+import { fetchWithAuth } from './fetch';
 
 // Go backend response format
 export interface GoApiResponse<T> {
@@ -12,6 +13,8 @@ interface AuthResponse {
   token: string;
   message?: string;
 }
+
+const API_BASE_URL = import.meta.env.VITE_BASE_API_URL || 'http://localhost:3000';
 
 export const api = {
   posts: {
@@ -27,7 +30,7 @@ export const api = {
       return result.data || result as Post;
     },
 
-    getByUsername: async (username: string): Promise<Post[]> => {
+    getByUsername: async (username: string, pageg = 1, limit = 3): Promise<Post[]> => {
       const response = await apiRequest('GET', `/api/posts/user/${username}`);
       const result: GoApiResponse<Post[]> = await response.json();
       return result.data || result as Post[];
@@ -50,16 +53,25 @@ export const api = {
     }
   },
 
-  auth: {
-    login: async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
-      const response = await apiRequest('POST', '/api/login', credentials);
-      const result: AuthResponse = await response.json();
-      
-      if(result.token){
-        localStorage.setItem('token', result.token);
+auth: {
+    login: async ({ email, password }: { email: string; password: string }) => {
+      const res = await fetch(`${API_BASE_URL}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err?.error || 'Failed to login');
       }
-      
-      return result;
+
+      return await res.json();
+    },
+
+    currentUser: async () => {
+      return await fetchWithAuth(`${API_BASE_URL}/api/user`);
     },
 
     register: async (userData: { username: string; email: string; password: string }) => {

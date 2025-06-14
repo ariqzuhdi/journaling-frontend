@@ -3,6 +3,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { Button } from '@/components/ui/button';
 import { Bold, Italic, List, Quote, Heading1, Heading2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useEffect } from 'react';
 
 interface TiptapEditorProps {
   content: string;
@@ -39,6 +40,12 @@ export function TiptapEditor({
       },
     },
   });
+
+  useEffect(() => {
+  if (editor && content !== editor.getHTML()) {
+    editor.commands.setContent(content, false); // Prevent infinite loop
+  }
+}, [content, editor]);
 
   if (!editor) {
     return null;

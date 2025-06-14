@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Heart } from 'lucide-react';
 import { countWords, calculateReadTime } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
@@ -20,18 +22,20 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { data: user } = useCurrentUser();
+  const [mood, setMood] = useState('');
+
 
   const createMutation = useMutation({
     mutationFn: (data: InsertPost) => api.posts.create(data),
     onSuccess: () => {
+      setTitle('');
+      setContent('');
+      setIsPublishing(false);
       queryClient.invalidateQueries({ queryKey: ['user-posts', user.username] });
       toast({
         title: "Published",
         description: "Your journal entry has been published.",
       });
-      setTitle('');
-      setContent('');
-      setIsPublishing(false);
       if (onClose) onClose();
     },
     onError: () => {
@@ -55,7 +59,7 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
     }
 
     setIsPublishing(true);
-    createMutation.mutate({ title: title.trim(), body: content });
+    createMutation.mutate({ title: title.trim(), body: content, });
   };
 
   const wordCount = countWords(content);
@@ -71,6 +75,26 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
               How are you feeling today?
             </h2>
             <div className="flex items-center space-x-4">
+              {/* <div className="items-center">
+                <Select value={mood} onValueChange={setMood}>
+                  <SelectTrigger className="w sm:w-20">
+                    <Heart className="h-4 w-4 mr-2" />
+                    {/* <SelectValue placeholder="-" /> */}
+                  {/* </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="happy">Happy</SelectItem>
+                    <SelectItem value="sad">Sad</SelectItem>
+                    <SelectItem value="grateful">Grateful</SelectItem>
+                    <SelectItem value="anxious">Anxious</SelectItem>
+                    <SelectItem value="peaceful">Peaceful</SelectItem>
+                    <SelectItem value="excited">Excited</SelectItem>
+                    <SelectItem value="reflective">Reflective</SelectItem>
+                    <SelectItem value="hopeful">Hopeful</SelectItem>
+                    <SelectItem value="confused">Confused</SelectItem>
+                    <SelectItem value="motivated">Motivated</SelectItem>
+                  </SelectContent>
+                </Select> */}
+              {/* </div> */}
               <div className="text-sm text-charcoal/50">
                 {wordCount} words • {readTime} min read
               </div>
@@ -84,7 +108,6 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
             </div>
           </div>
         </div>
-
         {/* Title Input */}
         <div className="px-8 py-6 border-b border-accent/10">
           <Input

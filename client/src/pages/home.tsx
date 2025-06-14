@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Plus, Heart, LogIn, UserPlus } from 'lucide-react';
+import { Plus, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'wouter';
 import { Navigation } from '@/components/navigation';
 import { StatsSection } from '@/components/stats-section';
 import { EntryCard } from '@/components/entry-card';
@@ -10,8 +9,7 @@ import { ComposeModal } from '@/components/compose-modal';
 import { ReadingModal } from '@/components/reading-modal';
 import { MediumEditor } from '@/components/medium-editor';
 import { Skeleton } from '@/components/ui/skeleton';
-import { countWords } from '@/lib/utils';
-import { calculateWritingStreak } from '@/lib/utils';
+import { countWords, calculateWritingStreak } from '@/lib/utils';
 import { api } from '@/lib/api';
 import type { Post } from '@shared/schema';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -21,18 +19,19 @@ export default function Home() {
   const [isReadingOpen, setIsReadingOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [visibleCount, setVisibleCount] = useState(3);
+
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
 
-const { data, isLoading } = useQuery({
-  enabled: !!user?.username,
-  queryKey: ['user-posts', user?.username],
-  queryFn: async () => {
-    if (!user?.username) throw new Error('User not found');
-    return await api.posts.getByUsername(user.username);
-  },
-});
+  const { data, isLoading } = useQuery({
+    enabled: !!user?.username,
+    queryKey: ['user-posts', user?.username],
+    queryFn: async () => {
+      if (!user?.username) throw new Error('User not found');
+      return await api.posts.getByUsername(user.username);
+    },
+  });
 
-  // Ensure posts is always an array
   const posts = Array.isArray(data) ? data : [];
 
   const handleReadMore = (post: Post) => {
@@ -50,52 +49,47 @@ const { data, isLoading } = useQuery({
     setEditingPost(null);
   };
 
-  // Calculate stats
   const totalEntries = posts.length;
   const totalWords = posts.reduce((sum, post) => sum + countWords(post.body), 0);
-  const writingStreak = calculateWritingStreak(posts); // This would be calculated based on actual posting frequency
+  const writingStreak = calculateWritingStreak(posts);
 
   return (
     <div className="min-h-screen journal-bg">
       <Navigation />
-      
+
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
         <section className="mb-12 text-center">
           <h2 className="text-4xl md:text-5xl font-serif font-semibold text-primary mb-4">
             Your Personal Sanctuary
           </h2>
           <p className="text-lg text-charcoal/80 max-w-2xl mx-auto leading-relaxed">
-            A private space for your thoughts, reflections, and journey of self-discovery. 
+            A private space for your thoughts, reflections, and journey of self-discovery.
             Write freely, explore deeply, and find clarity in your words.
           </p>
         </section>
 
-        {/* Stats Section */}
-        <StatsSection 
+        <StatsSection
           totalEntries={totalEntries}
           writingStreak={writingStreak}
           wordsWritten={totalWords}
         />
 
-        {/* Medium-style Writing Area */}
         <section className="mb-12">
           <MediumEditor />
         </section>
 
-        {/* Entry Feed */}
         <section className="space-y-8">
           <div className="flex justify-between items-center">
             <h3 className="text-2xl font-serif font-semibold text-primary">Recent Reflections</h3>
             <div className="flex space-x-2">
-              <Button
+              {/* <Button
                 variant="outline"
                 size="sm"
                 className="px-4 py-2 text-sm font-medium text-charcoal hover:text-primary transition-colors duration-200 border border-accent/20 rounded-full hover:border-primary/30"
               >
                 <Heart className="h-4 w-4 mr-2" />
                 All Moods
-              </Button>
+              </Button> */}
             </div>
           </div>
 
@@ -146,32 +140,34 @@ const { data, isLoading } = useQuery({
               </Button>
             </div>
           ) : (
-            <div className="space-y-8">
-              {posts.map((post) => (
-                <EntryCard
-                  key={post.id}
-                  post={post}
-                  onReadMore={handleReadMore}
-                  onEdit={handleEdit}
-                />
-              ))}
-            </div>
-          )}
+            <>
+              <div className="space-y-8">
+                {posts.slice(0, visibleCount).map((post) => (
+                  <EntryCard
+                    key={post.id}
+                    post={post}
+                    onReadMore={handleReadMore}
+                    onEdit={handleEdit}
+                  />
+                ))}
+              </div>
 
-          {posts.length > 0 && (
-            <div className="text-center py-8">
-              <Button
-                variant="outline"
-                className="px-8 py-3 text-primary border border-primary/30 rounded-full hover:bg-primary hover:text-white transition-all duration-200 font-medium"
-              >
-                Load More Reflections
-              </Button>
-            </div>
+              {visibleCount < posts.length && (
+                <div className="text-center py-8">
+                  <Button
+                    variant="outline"
+                    className="px-8 py-3 text-primary border border-primary/30 rounded-full hover:bg-primary hover:text-white transition-all duration-200 font-medium"
+                    onClick={() => setVisibleCount((prev) => prev + 4)}
+                  >
+                    Load More Reflections
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>
 
-      {/* Floating Compose Button */}
       <Button
         onClick={() => setIsComposeOpen(true)}
         className="fixed bottom-8 right-8 w-16 h-16 bg-primary text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center z-40"
@@ -179,7 +175,6 @@ const { data, isLoading } = useQuery({
         <Plus className="h-6 w-6" />
       </Button>
 
-      {/* Modals */}
       <ComposeModal
         isOpen={isComposeOpen}
         onClose={handleComposeClose}
@@ -193,7 +188,6 @@ const { data, isLoading } = useQuery({
         onEdit={handleEdit}
       />
 
-      {/* Footer */}
       <footer className="mt-24 border-t border-accent/10 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center space-y-4">

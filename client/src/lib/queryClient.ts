@@ -17,8 +17,8 @@ async function throwIfResNotOk(res: Response) {
 }
 
 // Backend URL configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+console.log("hehe" + import.meta.env.VITE_BASE_API_URL);
 export async function apiRequest(
   method: string,
   url: string,
@@ -45,17 +45,16 @@ export async function apiRequest(
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
+
 export const getQueryFn: <T>(options: {
+  url: string;
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
-  ({ on401: unauthorizedBehavior }) =>
-  async ({ queryKey }) => {
-    const url = queryKey[0] as string;
-    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
-
+  ({ url, on401 }) =>
+  async () => {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(fullUrl, {
+    const res = await fetch(`${API_BASE_URL}${url}`, {
       credentials: "include",
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +62,7 @@ export const getQueryFn: <T>(options: {
       },
     });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+    if (on401 === "returnNull" && res.status === 401) {
       return null;
     }
 
@@ -74,7 +73,6 @@ export const getQueryFn: <T>(options: {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
       staleTime: Infinity,
@@ -85,3 +83,4 @@ export const queryClient = new QueryClient({
     },
   },
 });
+

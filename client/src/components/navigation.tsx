@@ -4,10 +4,27 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Link } from 'wouter';
 import { useCurrentUser } from '@/hooks/use-current-user';
-
+import { useLocation } from 'wouter';
+import { api } from '@/lib/api';
 
 export function Navigation() {
-  const { data: user } = useCurrentUser();
+const { data, isLoading } = useCurrentUser();
+const user = data;
+const [, setLocation] = useLocation()
+const handleLogout = async () => {
+  try {
+    await api.auth.logout();
+    localStorage.removeItem('token');
+    setLocation('/login')
+  }
+    catch (error){
+      console.error('Logout failed:', error)
+    }
+  
+}
+
+if (isLoading) return null; // atau spinner
+
   return (
     <nav className="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-accent/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,40 +32,38 @@ export function Navigation() {
           <div className="flex items-center space-x-8">
             <Link href="/">
               <h1 className="text-2xl font-serif font-semibold text-primary cursor-pointer hover:text-primary/80 transition-colors duration-200">
-                Journal
+                Joura
               </h1>
             </Link>
             <div className="hidden md:flex space-x-6">
-              <Link href="/entries">
-                <a className="text-charcoal hover:text-primary transition-colors duration-200 font-medium flex items-center space-x-2">
+              <Link href="/entries"
+              className="text-charcoal hover:text-primary transition-colors duration-200 font-medium flex items-center space-x-2">
                   <BookOpen className="h-4 w-4" />
-                  <span>My Entries</span>
-                </a>
+                  <span>My Entries</span>  
               </Link>
-              <Link href="/">
-                <a className="text-charcoal hover:text-primary transition-colors duration-200 font-medium flex items-center space-x-2">
+              {/* <Link href="/"
+                className="text-charcoal hover:text-primary transition-colors duration-200 font-medium flex items-center space-x-2">
                   <Home className="h-4 w-4" />
                   <span>Home</span>
-                </a>
-              </Link>
+              </Link> */}
             </div>
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button 
+            {/* <Button 
               variant="ghost" 
               size="sm"
               className="p-2 text-charcoal hover:text-primary transition-colors duration-200"
             >
               <Search className="h-4 w-4" />
-            </Button>
+            </Button> */}
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center space-x-2 text-charcoal hover:text-primary transition-colors duration-200 p-2">
                   <Avatar className="w-8 h-8">
-                    <AvatarFallback className="bg-accent/20 text-primary font-medium text-sm">
-                      {user?.username?.charAt(0).toUpperCase() ?? 'G'}
+                    <AvatarFallback>
+                      {(user?.username?.charAt(0).toUpperCase()) || 'G'}
                     </AvatarFallback>
                   </Avatar>
                   <span className="hidden sm:block font-medium">{ user?.username ?? 'Guest' }</span>
@@ -61,7 +76,7 @@ export function Navigation() {
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer text-red-600 focus:text-red-600">
+                <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer text-red-600 focus:text-red-600" onClick={handleLogout}>
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
                 </DropdownMenuItem>

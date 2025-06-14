@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Heart } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useLocation } from 'wouter';
+import { queryClient } from '@/lib/queryClient';
+import { query } from 'express';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -26,17 +28,21 @@ export default function Login() {
     }
 
     try {
-      console.log('BASE_URL:', import.meta.env.VITE_API_BASE_URL);
-      const res = await api.auth.login({ email, password });
-      localStorage.setItem('token', res.token);
-      navigate('/');
-    } catch (err: any){
-        console.error(err);
-        alert('Login failed: ' +  (err?.message || 'Unknown error'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      const result = await api.auth.login({ email, password }); // <-- simpan hasilnya
+
+          localStorage.setItem("token", result.token); // <-- simpan token ke localStorage
+          // await queryClient.invalidateQueries({ queryKey: ['/api/user'] })
+          await queryClient.invalidateQueries({ queryKey: ['current-user'] });
+          await queryClient.refetchQueries({ queryKey: ['current-user'] });
+          navigate('/');
+        } catch (err: any) {
+            console.error(err);
+            alert('Login failed: ' + (err?.message || 'Unknown error'));
+        } finally {
+            setIsLoading(false);
+          } 
+  }
+
 
   return (
     <div className="min-h-screen journal-bg flex items-center justify-center px-4">

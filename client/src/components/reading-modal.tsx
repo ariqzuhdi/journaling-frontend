@@ -59,7 +59,7 @@ const deleteMutation = useMutation({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 bg-warm-white journal-bg">
+      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 bg-warm-white journal-bg overflow-y-auto">
         <div className="overflow-y-auto h-full">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="mb-8">
@@ -140,7 +140,7 @@ const deleteMutation = useMutation({
             <div className="mt-12 pt-8 border-t border-accent/10">
               <div className="flex items-center justify-between">
                 <div className="text-charcoal/60 text-sm">
-                  <p>Written with 💝 in your personal sanctuary</p>
+                  {/* <p>Written with 💝 in your personal sanctuary</p> */}
                 </div>
                 <div className="flex items-center space-x-3">
                   <Button

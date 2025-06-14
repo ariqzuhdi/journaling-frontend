@@ -113,14 +113,14 @@ export function ComposeModal({ isOpen, onClose, editingPost }: ComposeModalProps
           <DialogTitle className="text-xl font-serif font-semibold text-primary">
             {editingPost ? 'Edit Journal Entry' : 'New Journal Entry'}
           </DialogTitle>
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
             className="p-2 text-charcoal/50 hover:text-charcoal transition-colors duration-200"
           >
             <X className="h-5 w-5" />
-          </Button>
+          </Button> */}
         </DialogHeader>
 
         <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 140px)' }}>

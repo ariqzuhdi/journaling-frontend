@@ -24,11 +24,11 @@ export default function Entries() {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isReadingOpen, setIsReadingOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(6);
 
-  // TODO: Get current user from auth context
   const {data: user} = useCurrentUser();
   const currentUser = user?.username;
-
+  const loadMore = 6
   const { data, isLoading } = useQuery({
     queryKey: ['/api/posts/user', currentUser],
     queryFn: () => api.posts.getByUsername(currentUser),
@@ -66,7 +66,7 @@ export default function Entries() {
 
     return matchesSearch && matchesDate && matchesMood;
   });
-
+  const visiblePosts = filteredPosts.slice(0, visibleCount);
   const handleReadMore = (post: Post) => {
     setSelectedPost(post);
     setIsReadingOpen(true);
@@ -128,7 +128,7 @@ export default function Entries() {
             </Select>
 
             {/* Mood Filter */}
-            <Select value={moodFilter} onValueChange={setMoodFilter}>
+            {/* <Select value={moodFilter} onValueChange={setMoodFilter}>
               <SelectTrigger className="w-full lg:w-40">
                 <Heart className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Mood" />
@@ -146,7 +146,7 @@ export default function Entries() {
                 <SelectItem value="confused">Confused</SelectItem>
                 <SelectItem value="motivated">Motivated</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
 
             {/* View Mode Toggle */}
             <div className="flex bg-accent/10 rounded-lg p-1">
@@ -265,7 +265,7 @@ export default function Entries() {
           </div>
         ) : viewMode === 'card' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredPosts.map((post) => (
+            {visiblePosts.map((post) => (
               <EntryCard
                 key={post.id}
                 post={post}
@@ -276,17 +276,17 @@ export default function Entries() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredPosts.map((post) => (
+            {visiblePosts.map((post) => (
               <div
                 key={post.id}
-                className="bg-white rounded-lg border border-accent/10 p-4 hover:shadow-sm transition-shadow duration-200"
+                className="bg-white rounded-lg border border-accent/10 p-5 hover:shadow-sm transition-shadow duration-200"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="font-serif font-semibold text-lg text-primary mb-1 line-clamp-1">
+                    <h3 className="font-serif text-lg font-semibold text-primary mb-1 leading-snug">
                       {post.title}
                     </h3>
-                    <p className="text-charcoal/70 text-sm line-clamp-2 mb-2">
+                    <p className="font-serif text-base text-charcoal/80 mb-3 leading-relaxed line-clamp-3">
                       {post.body.replace(/<[^>]*>/g, '')}
                     </p>
                     <div className="flex items-center space-x-4 text-xs text-charcoal/50">
@@ -330,6 +330,7 @@ export default function Entries() {
             <Button
               variant="outline"
               className="px-8 py-3 text-primary border border-primary/30 rounded-full hover:bg-primary hover:text-white transition-all duration-200 font-medium"
+              onClick={() => setVisibleCount((prev) => prev + loadMore)}
             >
               Load More Entries
             </Button>

@@ -1,15 +1,23 @@
-// src/hooks/use-current-user.ts
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
+import { User } from "@/types/user";
 
 export function useCurrentUser() {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const [token, setToken] = useState<string | null>(null);
 
-  return useQuery({
-    queryKey: ['/api/user'],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+  useEffect(() => {
+    const stored = localStorage.getItem("token");
+    setToken(stored);
+  }, []); // hanya ambil sekali saat mount
+
+  return useQuery<User | null>({
+    queryKey: ['current-user'],
+    queryFn: getQueryFn({ url: '/api/user', on401: "returnNull" }),
     enabled: !!token,
-    staleTime: Infinity,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
     retry: false,
   });
 }
