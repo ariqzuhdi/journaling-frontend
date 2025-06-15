@@ -18,7 +18,6 @@ async function throwIfResNotOk(res: Response) {
 
 // Backend URL configuration
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-console.log("hehe" + import.meta.env.VITE_BASE_API_URL);
 export async function apiRequest(
   method: string,
   url: string,

@@ -32,27 +32,35 @@ export function formatDate(date: Date | string): string {
 export function formatReadTime(date: Date | string): string {
   const d = new Date(date);
   const now = new Date();
-  const diffInHours = (now.getTime() - d.getTime()) / (1000 * 60 * 60);
-  
-  if (diffInHours < 24) {
-    return `Today, ${d.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true 
-    })}`;
-  } else if (diffInHours < 48) {
-    return `Yesterday, ${d.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true 
-    })}`;
+
+  // Normalisasi ke hanya tanggal (tanpa jam)
+  const dateOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const diffInDays = Math.floor((nowOnly.getTime() - dateOnly.getTime()) / (1000 * 60 * 60 * 24));
+
+  const timeString = d.toLocaleTimeString('en-US', { 
+    hour: 'numeric', 
+    minute: '2-digit',
+    hour12: true 
+  });
+
+  if (diffInDays === 0) {
+    return `Today, ${timeString}`;
+  } else if (diffInDays === 1) {
+    return `Yesterday, ${timeString}`;
   } else {
     return d.toLocaleDateString('en-US', { 
       month: 'long', 
-      day: 'numeric'
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
     });
   }
 }
+
 
 export function calculateReadTime(text: string): number {
   const words = text.trim().split(/\s+/).filter(word => word.length > 0);

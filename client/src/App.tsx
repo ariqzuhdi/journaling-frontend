@@ -6,9 +6,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import Forgot from "@/pages/forgot";
 import Entries from "@/pages/entries";
 import NotFound from "@/pages/not-found";
 import ProtectedRoute from "@/components/protected-route";
+import EmailVerificationHandler from './pages/verify';
 
 function Router() {
   return (
@@ -16,6 +18,8 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/forgot" component={Forgot} />
+      <Route path="/verify" component={EmailVerificationHandler} />
       <Route
         path="/entries"
         component={() => (

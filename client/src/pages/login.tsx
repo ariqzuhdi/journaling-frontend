@@ -8,36 +8,57 @@ import { Heart } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useLocation } from 'wouter';
 import { queryClient } from '@/lib/queryClient';
-import { query } from 'express';
+import { toast } from '@/hooks/use-toast';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [, navigate] = useLocation();
+  const [identifier, setIdentifier] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     // TODO: Implement login logic dengan Go backend
-    if (!email || !password) {
-      alert('Email and password are required');
+    if (!identifier || !password) {
+      toast({
+        title: 'Missing fields',
+        description: 'Email/Username and password are required.',
+        variant: 'destructive',
+      });
       setIsLoading(false);
       return;
     }
 
     try {
-      const result = await api.auth.login({ email, password }); // <-- simpan hasilnya
-
+          const result = await api.auth.login({ identifier, password });
           localStorage.setItem("token", result.token); // <-- simpan token ke localStorage
           // await queryClient.invalidateQueries({ queryKey: ['/api/user'] })
           await queryClient.invalidateQueries({ queryKey: ['current-user'] });
           await queryClient.refetchQueries({ queryKey: ['current-user'] });
           navigate('/');
         } catch (err: any) {
-            console.error(err);
-            alert('Login failed: ' + (err?.message || 'Unknown error'));
+          console.error(err);
+
+          let message = 'Email or password was incorrect.';
+          if (err instanceof Response) {
+            try {
+              const data = await err.json();
+              if (data?.error) {
+                message = data.error;
+              }
+            } catch (_) {}
+          } else if (err instanceof Error && err.message) {
+            message = err.message;
+          }
+
+          toast({
+            title: 'Login failed',
+            description: message,
+            variant: 'destructive',
+          });
         } finally {
             setIsLoading(false);
           } 
@@ -65,15 +86,15 @@ export default function Login() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form noValidate onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="identifier">Email or Username</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="identifier"
+                  type="text"
+                  placeholder="Enter your email or username"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   required
                   disabled={isLoading}
                 />
@@ -103,7 +124,14 @@ export default function Login() {
               <p className="text-sm text-charcoal/60">
                 Don't have an account?{' '}
                 <Link href="/register" className="text-primary hover:underline font-medium">
-                  Create one here
+                  Sign up
+                </Link>
+              </p>
+            </div>
+            <div className="mt-3 text-center">
+              <p className="text-sm text-charcoal/60">
+                <Link href="/forgot" className="text-primary hover:underline font-medium">
+                  Forgot password?
                 </Link>
               </p>
             </div>
