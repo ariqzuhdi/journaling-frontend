@@ -99,10 +99,11 @@ const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form autoComplete="off" onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
+                
                   id="email"
                   type="email"
                   placeholder="Enter your email"

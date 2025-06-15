@@ -30,7 +30,7 @@ export const api = {
       return result.data || result as Post;
     },
 
-    getByUsername: async (username: string, pageg = 1, limit = 3): Promise<Post[]> => {
+    getByUsername: async (username: string): Promise<Post[]> => {
       const response = await apiRequest('GET', `/api/posts/user/${username}`);
       const result: GoApiResponse<Post[]> = await response.json();
       return result.data || result as Post[];
@@ -88,6 +88,29 @@ auth: {
       const response = await apiRequest('GET', '/api/user');
       const result: GoApiResponse<any> = await response.json();
       return result.data || result;
-    }
+    },
+
+    resetWithRecoveryKey: async ({
+      email,
+      recoveryKey,
+      newPassword,
+    }: {
+      email: string;
+      recoveryKey: string;
+      newPassword: string;
+    }) => {
+      const res = await fetch(`${API_BASE_URL}/api/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, recoveryKey, newPassword }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err?.error || 'Failed to reset password');
+      }
+
+      return await res.json();
+    },
   }
 };

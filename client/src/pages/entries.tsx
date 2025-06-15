@@ -24,11 +24,11 @@ export default function Entries() {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isReadingOpen, setIsReadingOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(4);
 
   const {data: user} = useCurrentUser();
   const currentUser = user?.username;
-  const loadMore = 6
+  const loadMore = 4
   const { data, isLoading } = useQuery({
     queryKey: ['/api/posts/user', currentUser],
     queryFn: () => api.posts.getByUsername(currentUser),
@@ -325,7 +325,7 @@ export default function Entries() {
         )}
 
         {/* Load More */}
-        {filteredPosts.length > 0 && filteredPosts.length >= 10 && (
+        {filteredPosts.length > 0 && filteredPosts.length >= 5 && (
           <div className="text-center py-8">
             <Button
               variant="outline"

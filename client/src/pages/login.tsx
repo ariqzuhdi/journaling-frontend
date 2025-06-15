@@ -8,7 +8,7 @@ import { Heart } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useLocation } from 'wouter';
 import { queryClient } from '@/lib/queryClient';
-import { query } from 'express';
+import { toast } from '@/hooks/use-toast';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -22,7 +22,11 @@ export default function Login() {
     
     // TODO: Implement login logic dengan Go backend
     if (!email || !password) {
-      alert('Email and password are required');
+      toast({
+        title: 'Missing fields',
+        description: 'Email and password are required.',
+        variant: 'destructive',
+      });
       setIsLoading(false);
       return;
     }
@@ -37,7 +41,11 @@ export default function Login() {
           navigate('/');
         } catch (err: any) {
             console.error(err);
-            alert('Login failed: ' + (err?.message || 'Unknown error'));
+            toast({
+              title: 'Login failed',
+              description: 'email or password was incorrect.',
+              variant: 'destructive',
+            });
         } finally {
             setIsLoading(false);
           } 
@@ -65,7 +73,7 @@ export default function Login() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form noValidate onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -103,7 +111,14 @@ export default function Login() {
               <p className="text-sm text-charcoal/60">
                 Don't have an account?{' '}
                 <Link href="/register" className="text-primary hover:underline font-medium">
-                  Create one here
+                  Sign up
+                </Link>
+              </p>
+            </div>
+            <div className="mt-3 text-center">
+              <p className="text-sm text-charcoal/60">
+                <Link href="/forgot" className="text-primary hover:underline font-medium">
+                  Forgot password?
                 </Link>
               </p>
             </div>

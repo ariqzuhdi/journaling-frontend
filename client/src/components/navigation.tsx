@@ -35,7 +35,7 @@ if (isLoading) return null; // atau spinner
                 Joura
               </h1>
             </Link>
-            <div className="hidden md:flex space-x-6">
+            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6">
               <Link href="/entries"
               className="text-charcoal hover:text-primary transition-colors duration-200 font-medium flex items-center space-x-2">
                   <BookOpen className="h-4 w-4" />

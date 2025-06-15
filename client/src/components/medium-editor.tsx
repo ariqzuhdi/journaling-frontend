@@ -74,7 +74,7 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
             <h2 className="text-xl font-serif font-semibold text-primary">
               How are you feeling today?
             </h2>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4">
               {/* <div className="items-center">
                 <Select value={mood} onValueChange={setMood}>
                   <SelectTrigger className="w sm:w-20">
