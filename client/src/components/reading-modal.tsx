@@ -8,6 +8,7 @@ import { api } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import type { Post } from '@shared/schema';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 interface ReadingModalProps {
   isOpen: boolean;
@@ -60,6 +61,7 @@ const deleteMutation = useMutation({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 bg-warm-white journal-bg overflow-y-auto">
+        <ScrollArea className="max-h-[80vh]">
         <div className="overflow-y-auto h-full">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="mb-8">
@@ -156,6 +158,7 @@ const deleteMutation = useMutation({
             </div>
           </div>
         </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

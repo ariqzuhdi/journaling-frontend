@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Heart } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -51,7 +52,7 @@ export default function Register() {
 
     setIsLoading(true);
 
-const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/register`, {
@@ -69,10 +70,18 @@ const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
         throw new Error(result.error || 'Failed to register');
       }
 
-      window.location.href = '/login'; // Redirect to login on success
+      toast({
+        title: 'Registration successful',
+        description: 'Please check your email to verify your account.',
+        variant: 'success',
+      });
+
+      setTimeout(() => {
+        window.location.href = '/login'; // Redirect to login on success
+      }, 2000);
 
     } catch (error: any) {
-      setError('Registration failed');
+      setError('Registration failed' + error?.message);
     } finally {
       setIsLoading(false);
     }

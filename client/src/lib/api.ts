@@ -14,7 +14,7 @@ interface AuthResponse {
   message?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_BASE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const api = {
   posts: {
@@ -54,11 +54,11 @@ export const api = {
   },
 
 auth: {
-    login: async ({ email, password }: { email: string; password: string }) => {
+    login: async ({ identifier, password }: { identifier: string; password: string }) => {
       const res = await fetch(`${API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier, password }),
         credentials: 'include',
       });
 
@@ -78,7 +78,6 @@ auth: {
       const response = await apiRequest('POST', '/api/register', userData);
       return await response.json();
     },
-
 
     logout: async () => {
       await apiRequest('POST', '/api/logout');

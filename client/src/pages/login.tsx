@@ -15,16 +15,17 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [, navigate] = useLocation();
+  const [identifier, setIdentifier] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     // TODO: Implement login logic dengan Go backend
-    if (!email || !password) {
+    if (!identifier || !password) {
       toast({
         title: 'Missing fields',
-        description: 'Email and password are required.',
+        description: 'Email/Username and password are required.',
         variant: 'destructive',
       });
       setIsLoading(false);
@@ -32,20 +33,32 @@ export default function Login() {
     }
 
     try {
-      const result = await api.auth.login({ email, password }); // <-- simpan hasilnya
-
+          const result = await api.auth.login({ identifier, password });
           localStorage.setItem("token", result.token); // <-- simpan token ke localStorage
           // await queryClient.invalidateQueries({ queryKey: ['/api/user'] })
           await queryClient.invalidateQueries({ queryKey: ['current-user'] });
           await queryClient.refetchQueries({ queryKey: ['current-user'] });
           navigate('/');
         } catch (err: any) {
-            console.error(err);
-            toast({
-              title: 'Login failed',
-              description: 'email or password was incorrect.',
-              variant: 'destructive',
-            });
+          console.error(err);
+
+          let message = 'Email or password was incorrect.';
+          if (err instanceof Response) {
+            try {
+              const data = await err.json();
+              if (data?.error) {
+                message = data.error;
+              }
+            } catch (_) {}
+          } else if (err instanceof Error && err.message) {
+            message = err.message;
+          }
+
+          toast({
+            title: 'Login failed',
+            description: message,
+            variant: 'destructive',
+          });
         } finally {
             setIsLoading(false);
           } 
@@ -75,13 +88,13 @@ export default function Login() {
           <CardContent>
             <form noValidate onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="identifier">Email or Username</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="identifier"
+                  type="text"
+                  placeholder="Enter your email or username"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   required
                   disabled={isLoading}
                 />
