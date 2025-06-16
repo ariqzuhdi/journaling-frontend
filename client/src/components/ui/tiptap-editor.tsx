@@ -1,16 +1,25 @@
+import { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Button } from '@/components/ui/button';
-import { Bold, Italic, List, Quote, Heading1, Heading2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useEffect } from 'react';
-import TextAlign from '@tiptap/extension-text-align'
+import TextAlign from '@tiptap/extension-text-align';
+
 import {
+  Bold,
+  Italic,
+  List,
+  Quote,
+  Heading1,
+  Heading2,
   AlignLeft,
   AlignCenter,
   AlignRight,
   AlignJustify,
-} from "lucide-react"
+  Undo2,
+  Redo2,
+} from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface TiptapEditorProps {
   content: string;
@@ -65,6 +74,26 @@ export function TiptapEditor({
     <div className={cn("w-full", className)}>
       {editable && (
         <div className="border-b border-accent/10 pb-3 mb-6 flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().undo().run()}
+            className="h-8 px-2"
+          >
+            <Undo2 className="h-4 w-4" />
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().redo().run()}
+            className="h-8 px-2"
+          >
+            <Redo2 className="h-4 w-4" />
+          </Button>
+
           <Button
             type="button"
             variant="ghost"

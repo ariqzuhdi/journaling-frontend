@@ -36,8 +36,8 @@ export default function Register() {
       return;
     }
 
-    if (username.length < 3 || username.length > 20) {
-      setError("Username must be between 3 and 20 characters");
+    if (username.length < 3 || username.length > 30) {
+      setError("Username must be between 3 and 30 characters");
       return;
     }
 
