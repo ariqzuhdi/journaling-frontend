@@ -4,6 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Bold, Italic, List, Quote, Heading1, Heading2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect } from 'react';
+import TextAlign from '@tiptap/extension-text-align'
+import {
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+} from "lucide-react"
 
 interface TiptapEditorProps {
   content: string;
@@ -13,12 +20,12 @@ interface TiptapEditorProps {
   className?: string;
 }
 
-export function TiptapEditor({ 
-  content, 
-  onChange, 
-  placeholder = "Start writing...", 
+export function TiptapEditor({
+  content,
+  onChange,
+  placeholder = "Start writing...",
   editable = true,
-  className 
+  className
 }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -26,6 +33,9 @@ export function TiptapEditor({
         heading: {
           levels: [1, 2, 3],
         },
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
       }),
     ],
     content,
@@ -42,10 +52,10 @@ export function TiptapEditor({
   });
 
   useEffect(() => {
-  if (editor && content !== editor.getHTML()) {
-    editor.commands.setContent(content, false); // Prevent infinite loop
-  }
-}, [content, editor]);
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content, false); // Prevent infinite loop
+    }
+  }, [content, editor]);
 
   if (!editor) {
     return null;
@@ -67,7 +77,7 @@ export function TiptapEditor({
           >
             <Bold className="h-4 w-4" />
           </Button>
-          
+
           <Button
             type="button"
             variant="ghost"
@@ -80,7 +90,7 @@ export function TiptapEditor({
           >
             <Italic className="h-4 w-4" />
           </Button>
-          
+
           <Button
             type="button"
             variant="ghost"
@@ -93,7 +103,7 @@ export function TiptapEditor({
           >
             <Heading1 className="h-4 w-4" />
           </Button>
-          
+
           <Button
             type="button"
             variant="ghost"
@@ -106,7 +116,7 @@ export function TiptapEditor({
           >
             <Heading2 className="h-4 w-4" />
           </Button>
-          
+
           <Button
             type="button"
             variant="ghost"
@@ -119,7 +129,7 @@ export function TiptapEditor({
           >
             <List className="h-4 w-4" />
           </Button>
-          
+
           <Button
             type="button"
             variant="ghost"
@@ -132,11 +142,64 @@ export function TiptapEditor({
           >
             <Quote className="h-4 w-4" />
           </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('left').run()}
+            className={cn(
+              "h-8 px-2",
+              editor.isActive({ textAlign: 'left' }) && "bg-accent/20"
+            )}
+          >
+            <AlignLeft className="h-4 w-4" />
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('center').run()}
+            className={cn(
+              "h-8 px-2",
+              editor.isActive({ textAlign: 'center' }) && "bg-accent/20"
+            )}
+          >
+            <AlignCenter className="h-4 w-4" />
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('right').run()}
+            className={cn(
+              "h-8 px-2",
+              editor.isActive({ textAlign: 'right' }) && "bg-accent/20"
+            )}
+          >
+            <AlignRight className="h-4 w-4" />
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+            className={cn(
+              "h-8 px-2",
+              editor.isActive({ textAlign: 'justify' }) && "bg-accent/20"
+            )}
+          >
+            <AlignJustify className="h-4 w-4" />
+          </Button>
+
         </div>
       )}
-      
-      <EditorContent 
-        editor={editor} 
+
+      <EditorContent
+        editor={editor}
         className="prose-journal"
       />
     </div>
