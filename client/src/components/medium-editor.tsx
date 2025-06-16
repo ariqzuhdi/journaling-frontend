@@ -76,7 +76,6 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
       // Tidak perlu enkripsi manual di sini.
       createMutation.mutate({ title: title.trim(), body: content });
     } catch (error) {
-      console.error("Publish error:", error);
       toast({
         title: "Publish Error",
         description: "Something went wrong. Please try again.",

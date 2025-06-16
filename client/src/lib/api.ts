@@ -33,10 +33,6 @@ const decryptPost = async (post: Post): Promise<Post> => {
       body,
     };
   } catch (err) {
-    console.error("❌ Failed to decrypt post:", post);
-    console.error("⛔ Error:", err);
-    console.warn("📦 Encrypted title:", post.title);
-    console.warn("🔑 Derived key (base64):", sessionStorage.getItem("derivedKey"));
     return {
       ...post,
       title: '[Error decrypting]',

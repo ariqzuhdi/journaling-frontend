@@ -31,7 +31,6 @@ export function Navigation() {
       localStorage.removeItem("token");
       setLocation("/login");
     } catch (error) {
-      console.error("Logout failed:", error);
     }
   };
 
