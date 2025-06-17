@@ -13,6 +13,7 @@ import NotFound from "@/pages/not-found";
 import ProtectedRoute from "@/components/protected-route";
 import EmailVerificationHandler from './pages/verify';
 import AccountSettings from "@/pages/settings";
+import UnderMaintenance from "./pages/maintenance";
 
 function Router() {
   return (
@@ -20,7 +21,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
-      <Route path="/forgot" component={Forgot} />
+      <Route path="/forgot" component={UnderMaintenance} />
       <Route path="/verify" component={EmailVerificationHandler} />
       <Route
         path="/entries"
@@ -34,7 +35,8 @@ function Router() {
         path="/settings"
         component={() => (
           <ProtectedRoute>
-            <AccountSettings />
+            {/* <AccountSettings /> */}
+            <UnderMaintenance/>
           </ProtectedRoute>
         )}
       />
