@@ -87,11 +87,8 @@ export default function Login() {
               Joura
             </h1>
           </div>
-          {/* <p className="text-charcoal/70">
+          <p className="text-charcoal/70">
             Welcome back to your personal sanctuary
-          </p> */}
-          <p className="text-3xl font-semibold bg-red-500">
-            UNDER MAINTENANCE!
           </p>
         </div>
 
@@ -116,8 +113,7 @@ export default function Login() {
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   required
-                  // disabled={isLoading}
-                  disabled
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -129,8 +125,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  // disabled={isLoading}
-                  disabled
+                  disabled={isLoading}
                 />
               </div>
               <Button
