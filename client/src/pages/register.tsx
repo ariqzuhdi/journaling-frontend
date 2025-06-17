@@ -154,7 +154,7 @@ export default function Register() {
           <div className="flex items-center justify-center mb-4">
             <Heart className="h-8 w-8 text-primary mr-2" />
             <h1 className="text-3xl font-serif font-semibold text-primary">
-              Journal
+              Joura
             </h1>
           </div>
           <p className="text-charcoal/70">Create your personal sanctuary</p>
