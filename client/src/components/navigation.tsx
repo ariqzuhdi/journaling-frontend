@@ -34,6 +34,13 @@ export function Navigation() {
     }
   };
 
+  const handleSetting = async () => {
+    try {
+      setLocation("/settings");
+    } catch (err) {
+    }
+  };
+
   if (isLoading) return null; // atau spinner
 
   return (
@@ -89,11 +96,13 @@ export function Navigation() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                {/* <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
+                <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer"
+                  onClick={handleSetting}
+                >
                   <Settings className="h-4 w-4" />
                   <span>Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator /> */}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="flex items-center space-x-2 cursor-pointer text-red-600 focus:text-red-600"
                   onClick={handleLogout}

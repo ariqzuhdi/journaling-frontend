@@ -8,9 +8,11 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Forgot from "@/pages/forgot";
 import Entries from "@/pages/entries";
+import settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 import ProtectedRoute from "@/components/protected-route";
 import EmailVerificationHandler from './pages/verify';
+import AccountSettings from "@/pages/settings";
 
 function Router() {
   return (
@@ -25,6 +27,14 @@ function Router() {
         component={() => (
           <ProtectedRoute>
             <Entries />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/settings"
+        component={() => (
+          <ProtectedRoute>
+            <AccountSettings />
           </ProtectedRoute>
         )}
       />
