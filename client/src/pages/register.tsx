@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Heart } from "lucide-react";
+import { Heart, Shield } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export default function Register() {
@@ -25,7 +25,7 @@ export default function Register() {
   const [isClosing, setIsClosing] = useState(false);
   const [hasAnimatedIn, setHasAnimatedIn] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  
+
   useEffect(() => {
     if (showPolicy) {
       setHasAnimatedIn(false);
@@ -274,12 +274,16 @@ export default function Register() {
                         : "translate-y-4 opacity-0 scale-95"
                     }`}
                 >
-                  <h2 className="text-lg font-semibold text-primary mb-4">
-                    Privacy & Data Protection
-                  </h2>
+                  <div className="flex items-center mb-4">
+                    <Shield className="h-5 w-5 text-primary mr-2" />
+                    <h2 className="text-lg font-semibold text-primary">
+                      Privacy & Data Protection
+                    </h2>
+                  </div>
+
                   <div className="text-sm text-charcoal space-y-3 max-h-64 overflow-y-auto">
                     <p>
-                      Your journal entries are encrypted end-to-end. Only you
+                      Your journal entries are <a target="_blank" className="text-primary" href="https://en.wikipedia.org/wiki/Encryption">encrypted</a> end-to-end. Only you
                       can decrypt them using your password.
                     </p>
                     <p>
@@ -288,8 +292,7 @@ export default function Register() {
                       purposes only.
                     </p>
                     <p>
-                      Please remember your password. We cannot recover your
-                      private entries if it's lost.
+                      Keep your password and recovery key safe. We cannot help recover your private entries if you lose them.
                     </p>
                     <p>
                       By using this app, you agree to this privacy model and

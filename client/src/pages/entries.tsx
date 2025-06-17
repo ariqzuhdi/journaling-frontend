@@ -26,8 +26,8 @@ export default function Entries() {
   const [isReadingOpen, setIsReadingOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(4);
 
-  const {data: user} = useCurrentUser();
-  
+  const { data: user } = useCurrentUser();
+
   const currentUser = user?.username ?? '';
 
   const loadMore = 4
@@ -48,14 +48,14 @@ export default function Entries() {
 
   // Filter posts based on search and filters
   const filteredPosts = posts.filter(post => {
-    const matchesSearch = searchQuery === '' || 
+    const matchesSearch = searchQuery === '' ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.body.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesDate = dateFilter === 'all' || (() => {
       const postDate = new Date(post.createdAt);
       const now = new Date();
-      
+
       switch (dateFilter) {
         case 'today':
           return postDate.toDateString() === now.toDateString();
@@ -70,7 +70,7 @@ export default function Entries() {
       }
     })();
 
-    const matchesMood = moodFilter === 'all' || 
+    const matchesMood = moodFilter === 'all' ||
       post.title.toLowerCase().includes(moodFilter.toLowerCase()) ||
       post.body.toLowerCase().includes(moodFilter.toLowerCase());
 
@@ -97,7 +97,7 @@ export default function Entries() {
   return (
     <div className="min-h-screen journal-bg">
       <Navigation />
-      
+
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -187,7 +187,7 @@ export default function Entries() {
             {searchQuery && (
               <Badge variant="secondary" className="px-3 py-1">
                 Search: "{searchQuery}"
-                <button 
+                <button
                   onClick={() => setSearchQuery('')}
                   className="ml-2 hover:text-primary"
                 >
@@ -198,7 +198,7 @@ export default function Entries() {
             {dateFilter !== 'all' && (
               <Badge variant="secondary" className="px-3 py-1">
                 Date: {dateFilter}
-                <button 
+                <button
                   onClick={() => setDateFilter('all')}
                   className="ml-2 hover:text-primary"
                 >
@@ -209,7 +209,7 @@ export default function Entries() {
             {moodFilter !== 'all' && (
               <Badge variant="secondary" className="px-3 py-1">
                 Mood: {moodFilter}
-                <button 
+                <button
                   onClick={() => setMoodFilter('all')}
                   className="ml-2 hover:text-primary"
                 >
@@ -217,9 +217,9 @@ export default function Entries() {
                 </button>
               </Badge>
             )}
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setSearchQuery('');
                 setDateFilter('all');
@@ -259,7 +259,7 @@ export default function Entries() {
               {posts.length === 0 ? 'No entries yet' : 'No entries match your filters'}
             </h3>
             <p className="text-charcoal/60 max-w-md mx-auto mb-6">
-              {posts.length === 0 
+              {posts.length === 0
                 ? 'Start your journaling journey by writing your first entry.'
                 : 'Try adjusting your search or filters to find what you\'re looking for.'
               }

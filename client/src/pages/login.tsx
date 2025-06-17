@@ -28,7 +28,6 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    // TODO: Implement login logic dengan Go backend
     if (!identifier || !password) {
       toast({
         title: "Missing fields",
@@ -62,7 +61,7 @@ export default function Login() {
           if (data?.error) {
             message = data.error;
           }
-        } catch (_) {}
+        } catch (_) { }
       } else if (err instanceof Error && err.message) {
         message = err.message;
       }
