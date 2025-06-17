@@ -72,7 +72,7 @@ export default function ResetPassword() {
                 <div className="text-center mb-8">
                     <div className="flex items-center justify-center mb-4">
                         <Heart className="h-8 w-8 text-primary mr-2" />
-                        <h1 className="text-3xl font-serif font-semibold text-primary">Journal</h1>
+                        <h1 className="text-3xl font-serif font-semibold text-primary">Joura</h1>
                     </div>
                     <p className="text-charcoal/70">Reset your password with your recovery key</p>
                 </div>
