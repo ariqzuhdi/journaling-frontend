@@ -8,30 +8,82 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { api } from "@/lib/api";
 
 export default function AccountSettings() {
   const [activeSection, setActiveSection] = useState<"password" | "username" | "email" | null>(null);
+  const [recoveryKey, setRecoveryKey] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await api.auth.resetPasswordWithRecoveryKey({ recoveryKey, newPassword });
+      setSuccess("Password changed successfully!");
+      setRecoveryKey("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setError(err.message || "Failed to change password");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderForm = () => {
     switch (activeSection) {
       case "password":
         return (
-          <form className="space-y-4 mt-4">
+          <form className="space-y-4 mt-4" onSubmit={handlePasswordChange}>
             <div>
-              <Label htmlFor="currentPassword">Current Password</Label>
-              <Input type="password" id="currentPassword" />
+              <Label htmlFor="recoveryKey">Recovery Key</Label>
+              <Input
+                type="text"
+                id="recoveryKey"
+                value={recoveryKey}
+                onChange={(e) => setRecoveryKey(e.target.value)}
+              />
             </div>
             <div>
               <Label htmlFor="newPassword">New Password</Label>
-              <Input type="password" id="newPassword" />
+              <Input
+                type="password"
+                id="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
             </div>
             <div>
               <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input type="password" id="confirmPassword" />
+              <Input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
             </div>
-            <Button type="submit" className="w-full">Change Password</Button>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Changing..." : "Change Password"}
+            </Button>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            {success && <p className="text-sm text-green-600">{success}</p>}
           </form>
         );
+
       case "username":
         return (
           <form className="space-y-4 mt-4">
@@ -88,7 +140,6 @@ export default function AccountSettings() {
                 variant="outline"
                 className="w-full"
                 onClick={() => setActiveSection("password")}
-                disabled
               >
                 Change Password
               </Button>
