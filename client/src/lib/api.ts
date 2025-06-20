@@ -208,7 +208,7 @@ export const api = {
         posts.map(async (post) => {
           try {
             console.log("➡️ Post ID:", post.id);
-            
+
             const encryptedTitle = await encrypt(post.title, newKey);
             const encryptedBody = await encrypt(post.body, newKey);
             console.log("🔐 Encrypted title:", encryptedTitle);
@@ -232,6 +232,46 @@ export const api = {
       sessionStorage.setItem("derivedKey", newKeyBase64);
 
       return await res.json();
+    },
+
+    changeEmail: async ({ email }: { email: string }) => {
+      const token = localStorage.getItem("token");
+      console.log(token)
+      const res = await fetch(`${API_BASE_URL}/api/account/change-email`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to change email");
+      }
+
+      return res.json();
+    },
+
+    changeUsername: async ({ username }: { username: string }) => {
+      const token = localStorage.getItem("token");
+      console.log(token)
+      const res = await fetch(`${API_BASE_URL}/api/account/change-username`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ username }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to change username");
+      }
+
+      return res.json();
     },
   },
 };

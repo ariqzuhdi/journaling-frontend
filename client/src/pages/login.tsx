@@ -151,7 +151,7 @@ export default function Login() {
             <div className="mt-3 text-center">
               <p className="text-sm text-charcoal/60">
                 <Link
-                  href="/forgot"
+                  href="/x"
                   className="text-primary hover:underline font-medium"
                 >
                   Forgot password?
