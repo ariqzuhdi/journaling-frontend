@@ -42,8 +42,7 @@ export default function ResetPassword() {
         }
 
         try {
-            await api.auth.resetWithRecoveryKey({
-                email,
+            await api.auth.resetPasswordWithRecoveryKey({
                 recoveryKey,
                 newPassword,
             });
