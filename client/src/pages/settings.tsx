@@ -174,9 +174,9 @@ export default function AccountSettings() {
   };
 
   return (
-    <div>
+    <div className="h-screen flex flex-col bg-muted/30">
       <Navigation />
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-muted/30">
+      <div className="flex-grow flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md mt-6">
           <Card>
             <CardHeader>
