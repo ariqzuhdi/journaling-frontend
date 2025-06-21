@@ -47,7 +47,6 @@ export default function Login() {
       const key = await deriveKeyFromString(password);
       const exported = await exportKeyToBase64(key);
       sessionStorage.setItem("derivedKey", exported);
-      console.log(sessionStorage.getItem("derivedKey"))
       await queryClient.invalidateQueries({ queryKey: ["current-user"] });
       await queryClient.refetchQueries({ queryKey: ["current-user"] });
       navigate("/");

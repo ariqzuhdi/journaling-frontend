@@ -41,7 +41,7 @@ export function Navigation() {
     }
   };
 
-  if (isLoading) return null; // atau spinner
+  if (isLoading) return null;
 
   return (
     <nav className="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-accent/20">

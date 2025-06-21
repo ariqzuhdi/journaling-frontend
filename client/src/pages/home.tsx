@@ -27,10 +27,10 @@ export default function Home() {
   const queryClient = useQueryClient()
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
 
-  // State untuk simpan derived key hasil import
+  // State to save derive key from import result
   const [key, setKey] = useState<CryptoKey | null>(null);
 
-  // Ambil dari sessionStorage saat komponen mount
+  // Grab from sessionStorage when component mounted
   useEffect(() => {
     const derivedKeyBase64 = typeof window !== "undefined"
       ? sessionStorage.getItem("derivedKey")

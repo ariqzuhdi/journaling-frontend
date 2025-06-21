@@ -73,7 +73,6 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
     setIsPublishing(true);
 
     try {
-      // Tidak perlu enkripsi manual di sini.
       createMutation.mutate({ title: title.trim(), body: content });
     } catch (error) {
       toast({

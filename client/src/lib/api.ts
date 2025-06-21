@@ -175,11 +175,8 @@ export const api = {
       recoveryKey: string;
       newPassword: string;
     }) => {
-      const oldKey = await getKeyFromSession(); // Ambil derivedKey lama
-      console.log("[🔑 OLD DERIVED KEY]", oldKey);
-      console.log("[🔐 OLD BASE64]", sessionStorage.getItem("derivedKey"));
 
-      // Step 1: Kirim request ke backend untuk update password
+      // Send request to backend for password update
       const res = await fetch(`${API_BASE_URL}/api/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -191,28 +188,23 @@ export const api = {
         throw new Error(err?.error || "Failed to reset password");
       }
 
-      // Step 2: Derive key baru dari newPassword
+      // Derive new key from newPassword
       const newKey = await deriveKeyFromString(newPassword);
       const newKeyBase64 = await exportKeyToBase64(newKey);
-      console.log("[🆕 DERIVED KEY]", newKey);
-      console.log("[🆕 BASE64]", newKeyBase64);
 
-      // Step 3: Ambil semua post user
+      // Grab all user posts
       const currentUser = await api.auth.getCurrentUser();
       const posts = await api.posts.getByUsername(currentUser.username);
 
-      // Step 4: Re-encrypt semua post dengan error handling
+      // Re-encrypt all posts dengan error handling
       const MIN_GCM_LENGTH = 12 + 16;
 
       await Promise.all(
         posts.map(async (post) => {
           try {
-            console.log("➡️ Post ID:", post.id);
-
+            
             const encryptedTitle = await encrypt(post.title, newKey);
             const encryptedBody = await encrypt(post.body, newKey);
-            console.log("🔐 Encrypted title:", encryptedTitle);
-            console.log("🔐 Encrypted body:", encryptedBody);
 
             await api.posts.update(
               post.id,
@@ -236,7 +228,6 @@ export const api = {
 
     changeEmail: async ({ email }: { email: string }) => {
       const token = localStorage.getItem("token");
-      console.log(token)
       const res = await fetch(`${API_BASE_URL}/api/account/change-email`, {
         method: "PUT",
         headers: {
@@ -256,7 +247,6 @@ export const api = {
 
     changeUsername: async ({ username }: { username: string }) => {
       const token = localStorage.getItem("token");
-      console.log(token)
       const res = await fetch(`${API_BASE_URL}/api/account/change-username`, {
         method: "PUT",
         headers: {
