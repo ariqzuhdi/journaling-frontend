@@ -245,13 +245,15 @@ export default function Home() {
               growing, keep discovering the beautiful complexity of being human.
             </p>
             <div className="flex justify-center space-x-6 pt-6">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-charcoal/50 hover:text-primary transition-colors duration-200"
-              >
-                <Heart className="h-5 w-5" />
-              </Button>
+              <a href="https://saweria.co/ariqzhd" target="_blank">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-charcoal/50 hover:text-primary transition-colors duration-200"
+                >
+                  <Heart className="h-5 w-5" />
+                </Button>
+              </a>
             </div>
           </div>
         </div>
