@@ -159,8 +159,8 @@ export function MediumEditor({ onClose }: MediumEditorProps) {
               {/* This is your private space for reflection and growth */}
             </div>
             <div className="flex items-center space-x-4">
-              <span>Auto-saved</span>
-              <span>•</span>
+              {/* <span>Auto-saved</span>
+              <span>•</span> */}
               <span>{new Date().toLocaleDateString()}</span>
             </div>
           </div>
